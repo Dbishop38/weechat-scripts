@@ -1,27 +1,42 @@
 """
 Dummy weechat python module.
+
     Purpose:
-        To add code completion/documentation/Intellisense for the weechat module
-        when editing python weechat scripts in Pycharm/vscode and similar code
-        editors. This module is designed for python (3.x) and weechat (> 2.4)
+        To add code completion/documentation/Intellisense for weechat by
+        providing a "dummy" module to satisfy the "import weechat" statement
+        in python weechat scripts when creating or editing python weechat
+        scripts in Pycharm/vscode and similar code editors.
+        This module is designed for python (3.x), WeeChat (2.4-2.6), and
+        new scripters who don't know the WeeChat scripting API by heart or
+        want to reduce the amount of time they need to spend digging
+        around for correct syntax.
     How To Use:
         Place this module in a location which will allow your python environment
-        to import it to satisfy your "import weechat" declaration.
+        to import it to satisfy your "import weechat" script statement.
         (Same directory typically will work (python 3+))
 
         You should now see function names, parameter information and
         documentation when using intellisense features of your editor.
-        Function, parameter, examples and other info were stolen liberally
+        Function, parameter, examples and other info were gathered
         from : https://weechat.org/files/doc/stable/weechat_plugin_api.en.html
+        and edited to reflect scripting for python specifically.
     Version / Revision History:
         1.0 - Initial Version
     Credits:
         Sébastien Helleu flashcode@flashtux.org :
-            Scripting API and Plugin API references: https://weechat.org/doc
-            which provided function descriptions, argument details, return
-            values and examples.
+            Author of WeeChat, who's Scripting API and Plugin API references:
+            https://weechat.org/doc I used to add function descriptions,
+            argument details, return values and examples.
         David Bishop <dbishop38@gmail.com> :
-            module assembly with professional cut and paste skills.
+            dummy module creator assembled with basic copy and paste skill.
+    License:
+        This module uses the same license as WeeChat (GPL3)
+        This module is distributed in the hope that it will be useful, but
+        WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+        See the GNU General Public License for more details.
+        You should have received a copy of the GNU General Public License
+        along with WeeChat.org. If not, see https://www.gnu.org/licenses/.
 """
 # pylint: disable= unused-argument, unnecessary-pass, too-many-lines
 # pylint: disable= too-many-arguments
@@ -1596,12 +1611,12 @@ def log_print(message: str) -> None:
     pass
 
 
-def hook_command(command: str, description: str, args: str,
+def hook_command(cmd: str, description: str, args: str,
                  args_description: str, completion: str, callback: str,
                  callback_data: str) -> str:
     """ Hook a command.
 
-    :param command: command name (priority allowed)
+    :param cmd: command name (priority allowed)
     :param description: description for command (displayed with /help)
     :param args: arguments for command (displayed with /help)
     :param args_description: description of arguments (displayed with /help)
@@ -1702,10 +1717,10 @@ def hook_completion_get_string(completion: str, property_name: str) -> str:
     pass
 
 
-def hook_command_run(command: str, callback: str, callback_data: str) -> str:
+def hook_command_run(cmd: str, callback: str, callback_data: str) -> str:
     """ Hook a command when WeeChat runs it.
 
-    :param command: command to hook (wildcard * is allowed) (priority allowed)
+    :param cmd: command to hook (wildcard * is allowed) (priority allowed)
     :param callback: function called when command is run
     :param callback_data: pointer given to callback when it is called by WeeChat
     :return: pointer to new hook
@@ -1775,11 +1790,11 @@ def hook_fd(fd: str, flag_read: int, flag_write: int, flag_exception: int,
     pass
 
 
-def hook_process(command: str, timeout: int, callback: str,
+def hook_process(cmd: str, timeout: int, callback: str,
                  callback_data: str) -> str:
     """ Hook a process (launched with fork) and catch output)
 
-    :param command: command to launch in a child process. URL or function
+    :param cmd: command to launch in a child process. URL or function
     :param timeout: timeout for command (in milliseconds), after this timeout,
         child process is killed (0 = no timeout)
     :param callback: function called when data from child is available, or
@@ -1828,11 +1843,11 @@ def hook_process(command: str, timeout: int, callback: str,
     pass
 
 
-def hook_process_hashtable(command: str, options: dict, timeout: int,
+def hook_process_hashtable(cmd: str, options: dict, timeout: int,
                            callback: str, callback_data: str) -> str:
     """ Hook a process (launched with fork) using options in a hashtable
 
-    :param command: command to launch in a child process. URL or function
+    :param cmd: command to launch in a child process. URL or function
     :param options: options for command executed
     :param timeout: timeout for command (in milliseconds), after this timeout,
         child process is killed (0 = no timeout)
@@ -1972,7 +1987,7 @@ def hook_line(buffer_type: str, buffer_name: str, tags: str, callback: str,
                 with this hook).
 
     .. code-block:: python
-    
+
         def my_line_cb(data, line):
             # force a highlight on the line
             return {"highlight": "1"}
@@ -2357,6 +2372,1374 @@ def hook_info(info_name: str, description: str, args_description: str,
 
         hook = weechat.hook_info("my_info", "Some info", "Info about arguments",
                                  "my_info_cb", "")
+
+    """
+    pass
+
+def hook_info_hashtable(info_name: str, description: str, args_description: str,
+                        output_description: str, callback: str,
+                        callback_data: str) -> str:
+    """ Hook an information (callback takes and returns a hashtable (dict)).
+
+    :param info_name: name of info (priority allowed)
+    :param description: description
+    :param args_description: description of expected hashtable (dict)
+    :param output_description: description of hashtable (dict) returned
+    :param callback: function called when info is asked
+    :param callback_data: pointer given to callback (typically "" (NULL))
+    :return: pointer to new hook
+
+    .. code-block:: python
+
+        def my_info_hashtable_cb(data, info_name, hashtable):
+            return {"test_key": "test_value"}
+
+        hook = weechat.hook_info_hashtable("my_info_hashtable", "Some info",
+                                        "Info about input hashtable",
+                                        "Info about output hashtable",
+                                        "my_info_hashtable_cb", "")
+    """
+    pass
+
+def hook_infolist(infolist_name: str, description: str, pointer_description: str,
+                  args_description: str, callback: str,
+                  callback_data: str) -> str:
+    """ Hook an infolist: callback will return pointer to infolist asked.
+
+    :param infolist_name: name of infolist (priority allowed)
+    :param description: description
+    :param pointer_description: description of pointer (optional  "" NULL)
+    :param args_description: description of arguments (optional "" NULL)
+    :param callback: function called when infolist is asked
+    :param callback_data: pointer given to callback
+    :return: pointer to new hook
+
+    .. code-block:: python
+        def my_infolist_cb(data, infolist_name, pointer, arguments):
+            # build infolist
+            # ...
+            return my_infolist
+
+        hook = weechat.hook_infolist("my_infolist", "Infolist with some data",
+                                    "Info about pointer",
+                                    "Info about arguments",
+                                    "my_infolist_cb", "")
+
+    """
+    pass
+
+def hook_focus(area: str, callback: str, callback_data: str) -> str:
+    """ Hook a focus: mouse event or key pressed in cursor mode
+
+    :param area: "chat" for chat area, or name of bar item (priority allowed)
+    :param callback: function called when focus is made
+    :param callback_data: pointer given to callback (usually "" (NULL))
+    :return: pointer to new hook
+
+    .. note::
+        hashtable (dict) sent to callback will contain information such as:
+        Key             Description             Example
+        ====================================================================
+        _x              Column on screen        "0" …​ "n"
+        _y              Line on screen          "0" …​ "n"
+        _key        Key or mouse event      "button1", "button2-gesture-left"
+        _window         Pointer to window       "0x12345678"
+        _window_number  Number of window        "1" …​ "n"
+        _buffer         Pointer to buffer       "0x12345678"
+        _buffer_number  Number of buffer        "1" …​ "n"
+        _buffer_plugin  Plugin name of buffer   "core", "irc", …
+        _buffer_name    Name of buffer          "weechat", "freenode.#weechat"
+        _buffer_full_name   Full name of buffer "core.weechat",
+                                                "irc.freenode.#weechat", …
+        _buffer_localvar_XXX Local variables of buffer      any value
+        _chat           Chat area indicator     "0" or "1"
+        _chat_line      Pointer to line         "0x12345678"
+        _chat_line_x    Column in line          "0" …​ "n"
+        _chat_line_y    Line number             "0" …​ "n"
+        _chat_line_date     Line date/time      "1313237175"
+        _chat_line_date_printed Line date/time  "1313237175"
+        _chat_line_time     Time displayed      "14:06:15"
+        _chat_line_tags     Tags of line        "irc_privmsg,nick_flashy,log1"
+        _chat_line_nick     Nick of line        "FlashCode"
+        _chat_line_prefix   Prefix of line      "@FlashCode"
+        _chat_line_message  Message of line     "Hello world!"
+        _chat_word          Word at (x,y)       "Hello"
+        _chat_bol           Beginning of line ⇒ (x-1,y)     "He"
+        _chat_eol           (x,y) ⇒ end of line.    "llo world!"
+        _bar_name           name of bar         "title", "nicklist", …
+        _bar_filling        Filling of bar      "horizontal", "vertical", …
+        _bar_item_name      Name of bar item    "buffer_nicklist", "hotlist", …​
+        _bar_item_line      Line in bar item    "0" …​ "n"
+        _bar_item_col       Column in bar item  "0" …​ "n"
+
+        Extra info for bar item "buffer_nicklist":
+
+        Key         Plugin  Description
+        ==========================================
+        nick        core    Nick name
+        prefix      core    Prefix for nick
+        group       core    Group name
+        irc_host    irc     Host for nick (if known)
+
+    .. code-block:: python
+
+        hook = weechat.hook_focus("buffer_nicklist","my_focus_nicklist_cb", "")
+    """
+    pass
+
+def hook_set(hook: str, property_name: str, value: str) -> str:
+    """ Set string value of a hook property.
+
+    :param hook: something hooked with "weechat_hook_xxx()"
+    :param property_name: property name (see table below)
+    :param value: new value for property
+    :return: None
+
+    .. note::
+        Name 	    Hook type 	    Value 	    Description
+        subplugin   any type        any string  Name of sub plugin
+                                                (commonly script name,
+                                                which is displayed in /help
+                                                command for a hook of type
+                                                command).
+        stdin       process, process_hashtable  any string Send data on standard
+                                                input (stdin) of child process.
+        stdin_close process, process_hashtable  (not used)  Close pipe used to
+                                                send data on standard input
+                                                (stdin) of child process.
+        signal      process, process_hashtable  signal number or one of these
+                                                names: hup, int, quit, kill,
+                                                term, usr1, usr2
+                                                Send a signal to the child
+                                                process.
+    """
+    pass
+
+def unhook(hook: str) -> None:
+    """ Unhook something hooked.
+
+    :param hook: something hooked with "weechat_hook_xxx()"
+    :return: None
+
+    .. code-block:: python
+        weechat.unhook(my_hook)
+    """
+    pass
+
+
+def unhook_all() -> None:
+    """ Unhook everything that has been hooked by current script.
+
+    :return: None
+
+    .. code-block:: python
+        weechat.unhook_all()
+
+    """
+    pass
+
+def buffer_new(name: str, input_callback: str, input_callback_data: str,
+               close_callback: str, close_callback_data: str) -> str:
+    """ Open a new buffer
+
+    :param name: name of buffer (must be unique)
+    :param input_callback: function called when input text is entered on buffer
+    :param input_callback_data: pointer given to callback
+    :param close_callback: function called when buffer is closed
+    :param close_callback_data: pointer given to callback for close buffer
+    :return: pointer to a new buffer
+
+    .. code-block:: python
+
+        def my_input_cb(data, buffer, input_data):
+            weechat.prnt(buffer, "Text: %s" % input_data)
+            return weechat.WEECHAT_RC_OK
+
+        def my_close_cb(data, buffer):
+            weechat.prnt("", "Buffer '%s' will be closed!" %
+                         weechat.buffer_get_string(buffer, "name"))
+            return weechat.WEECHAT_RC_OK
+
+        buffer = weechat.buffer_new("my_buffer", "my_input_cb", "",
+                                    "my_close_cb", "")
+
+    """
+    pass
+
+def current_buffer() -> str:
+    """ Return pointer to current buffer (buffer displayed by current window)
+
+    :return: pointer to current buffer
+
+    .. code-block:: python
+
+        weechat.prnt(weechat.current_buffer(), "Text on current buffer")
+    """
+    pass
+
+def buffer_search(plugin: str, name: str) -> str:
+    """ Search a buffer by plugin and/or name.
+
+    :param plugin: name of plugin
+    :param name: name of buffer, if NULL ("") current buffer is returned
+    :return: pointer to buffer found, NULL ("") if not found
+
+    .. note::
+        ==: the name used is the buffer full name (for example:
+        irc.freenode.#weechat instead of freenode.#weechat)
+
+.. code-block:: python
+
+        buffer = weechat.buffer_search("my_plugin", "my_buffer")
+    """
+    pass
+
+
+def buffer_search_main() -> str:
+    """ Search WeeChat main buffer (core)
+
+    :return: pointer to WeeChat main buffer (core buffer)
+
+    .. code-block:: python
+
+        buffer = weechat.buffer_search_main()
+    """
+    pass
+
+def buffer_clear(buffer: str) -> None:
+    """ Clear contents of a buffer.
+
+    :param buffer: buffer pointer
+    :return: None
+
+    .. code-block:: python
+
+        buffer = weechat.buffer_search("my_plugin", "my_buffer")
+        if buffer != "":
+            weechat.buffer_clear(buffer)
+    """
+    pass
+
+def buffer_close(buffer: str) -> None:
+    """ Close a buffer
+
+    :param buffer: buffer pointer
+    :return: None
+
+    .. code-block:: python
+
+        buffer = weechat.buffer_new("my_buffer", "my_input_cb", "", "my_close_cb", "")
+        # ...
+        weechat.buffer_close(buffer)
+
+    """
+    pass
+
+
+def buffer_merge(buffer: str, target_buffer: str) -> None:
+    """ Merge buffer into another buffer: both still separate but same number
+
+    :param buffer: buffer pointer
+    :param target_buffer: target buffer, where buffer will be merged
+
+    .. code-block:: python
+
+        # example
+        # merge current buffer with WeeChat "core" buffer
+        weechat.buffer_merge(weechat.current_buffer(),
+                             weechat.buffer_search_main())
+
+    """
+    pass
+
+def buffer_unmerge(buffer: str, number: int) -> None:
+    """ Unmerge buffer from a group of merged buffers.
+
+    :param buffer: buffer pointer
+    :param number: target number for detached buffer, if it is < 1 then
+    buffer will be moved to number of buffer + 1
+
+    .. code-block:: python
+
+        weechat.buffer_unmerge(weechat.current_buffer(), 1)
+    """
+    pass
+
+def buffer_get_integer(buffer: str, property_name: str) -> int:
+    """ Return integer value of a buffer property.
+
+    :param buffer: buffer pointer
+    :param property_name: propety name (see table)
+    :return: integer value of property
+
+    .. note::
+        Property name can be:
+        number:                     number of buffer (starts to 1)
+        layout_number:              number of buffer saved in layout
+        layout_number_merge_order:  order in merge for layout
+        short_name_is_set:          1 if short name is set, 0 if not set
+        type:                       buffer type (0: formatted, 1: free content)
+        notify:                     notify level for buffer
+        num_displayed:              number of windows displaying buffer
+        active:                     2 if buffer is the only active (merged),
+                                    1 if buffer is active,
+                                    0 if buffer is merged and not selected
+        hidden:                     1 if buffer is hidden, otherwise 0
+        zoomed:                     1 if buffer is merged and zoomed,
+                                    otherwise 0
+        print_hooks_enabled:        1 if print hooks are enabled, otherwise 0
+        day_change:                 1 if messages for the day change are
+                                    displayed, otherwise 0
+        clear:                      1 if buffer can be cleared with command
+                                    /buffer clear, otherwise 0
+        filter:                     1 if filters are enabled on buffer,
+                                    otherwise 0
+        lines_hidden:               1 if at least one line is hidden on buffer
+                                    (filtered), or 0 if all lines are displayed
+        prefix_max_length:          max length for prefix in this buffer
+        time_for_each_line:         1 if time is displayed for each line in
+                                    buffer (default), otherwise 0
+        nicklist:                   1 if nicklist is enabled, otherwise 0
+        nicklist_case_sensitive:    1 if nicks are case sensitive, otherwise 0
+    nicklist_max_length:            max length for a nick
+    nicklist_display_groups:        1 if groups are displayed, otherwise 0
+    nicklist_count:                 number of nicks and groups in nicklist
+    nicklist_groups_count:          number of groups in nicklist
+    nicklist_nicks_count:           number of nicks in nicklist
+    nicklist_visible_count:         number of nicks/groups displayed
+    input:                          1 if input is enabled, otherwise 0
+    input_get_unknown_commands:     1 if unknown commands are sent to input
+                                    callback, otherwise 0
+    input_get_empty:                1 if empty input is sent to input callback,
+                                    otherwise 0
+    input_size:                     input size (in bytes)
+    input_length:                   input length (number of chars)
+    input_pos:                      cursor position in buffer input
+    input_1st_display:              first char displayed on screen
+    num_history:                    number of commands in history
+    text_search: text search type:
+        0: no search at this moment
+        1: backward search (direction: oldest messages)
+        2: forward search (direction: newest messages)
+    text_search_exact:              1 if text search is case sensitive
+    text_search_found:              1 if text found, otherwise 0
+
+    .. code-block:: python
+
+        weechat.prnt("", "my buffer number is: %d" %
+                     weechat.buffer_get_integer(my_buffer, "number"))
+    """
+    pass
+
+def buffer_get_string(buffer: str, property_name: str) -> str:
+    """ Return string value of a buffer property.
+
+    :param buffer: buffer pointer
+    :param property_name: name of property
+    :return: string value of property
+
+    .. note::
+        Values for property_name :
+        plugin:     name of plugin which created this buffer
+                    ("core" for WeeChat main buffer)
+        name:       name of buffer
+        full_name:  full name of buffer ("plugin.name") (WeeChat ≥ 0.3.7)
+        short_name: short name of buffer (note: used for display only and
+                    can be changed by user, this must not be used to find
+                    name of buffer, use instead name, full_name or local
+                    variable channel)
+        title:      title of buffer
+        input:      input text
+        text_search_input:  input saved before text search
+        highlight_words:    list of words to highlight
+        highlight_regex:    POSIX extended regular expression for highlight
+        highlight_tags_restrict: restrict highlights to messages with these
+                                 tags
+        highlight_tags:     force highlight on messages with these tags
+        hotlist_max_level_nicks: max hotlist level for some nicks
+        localvar_xxx:   get content of local variable "xxx" (replace "xxx"
+                        by the name of variable to read)
+
+
+    .. code-block:: python
+
+        weechat.prnt("", "name / short name of buffer are: %s / %s"
+            % (weechat.buffer_get_string(my_buffer, "name"),
+            weechat.buffer_get_string(my_buffer, "short_name")))
+
+    """
+    pass
+
+def buffer_get_pointer(buffer: str, property_name: str) -> str:
+    """ Return pointer value of a buffer property.
+
+    :param buffer: buffer pointer
+    :param property_name: name of property
+    :return: pointer value of property
+
+    .. code-block:: python
+
+        weechat.prnt("", "plugin pointer of my buffer: %s" %
+                     weechat.buffer_get_pointer(my_buffer, "plugin"))
+
+    """
+    pass
+
+def buffer_set(buffer: str, property_name: str, value: str) -> None:
+    """ Set string value of a buffer property
+
+    :param buffer: buffer pointer
+    :param property_name: property name (see table)
+    :param value: new string value for property
+    :return: None
+
+    .. note::
+        Name 	            Value
+        hotlist             "+", "-",
+                            WEECHAT_HOTLIST_LOW,
+                            WEECHAT_HOTLIST_MESSAGE,
+                            WEECHAT_HOTLIST_PRIVATE,
+                            WEECHAT_HOTLIST_HIGHLIGHT,
+                            "-1"
+        "+": enable hotlist (global setting, buffer pointer is not used)
+        "-": disable hotlist (global setting, buffer pointer is not used)
+             priority: add buffer to hotlist with this priority
+        "-1": remove buffer from hotlist (WeeChat ≥ 1.0).
+
+        completion_freeze      "0" or "1"
+        "0": no freeze of completion (default value)
+            (global setting, buffer pointer is not used)
+        "1": do not stop completion when command line is updated
+            (global setting, buffer pointer is not used).
+
+        unread      -               Set unread marker after last line of buffer.
+        display     "1" or "auto"   "1": switch to this buffer in current window
+                                    "auto": switch to this buffer in current
+                                    window, read marker is not reset.
+        hidden      "0" or "1"      "0": unhide the buffer
+                                    "1": hide the buffer.
+        number      number          Move buffer to this number.
+        name        any string      Set new name for buffer.
+        short_name  any string      Set new short name for buffer.
+        type        "formatted" or "free"   Set type for buffer: "formatted"
+                                            (for printing chat messages), or
+                                            "free" (for free content); when
+                                            the value is "free", the property
+                                            clear is forced to "0"
+        notify      "0", "1", "2", "3"  Set notify level for buffer:
+                                        "0" = never add to hotlist,
+                                        "1" = add for highlights only,
+                                        "2" = add for highlights and messages,
+                                        "3" = add for all messages.
+        print_hooks_enabled "0" or "1"  "0" to disable print hooks,
+                                        "1" to enable them (default for
+                                            a new buffer).
+        day_change  "0" or "1"      "0" to hide messages for the day change,
+                                    "1" to see them (default for a new buffer).
+        clear       "0" or "1"      "0" to prevent user from clearing buffer
+                                        with the command /buffer clear,
+                                    "1" to let user clear the buffer (default
+                                        for a new buffer) (note: even when it
+                                        is set to "0", the buffer can still be
+                                        cleared with the function buffer_clear).
+        filter	    "0" or "1"      "0": disable filters on buffer
+                                    "1": enable filters on buffer.
+        title       any string      Set new title for buffer.
+        time_for_each_line  "0" or "1"  "0" to hide time for all lines in buffer,
+                                        "1" to see time for all lines
+                                        (default for a new buffer).
+        nicklist    "0" or "1"      "0" to remove nicklist for buffer,
+                                    "1" to add nicklist for buffer.
+        nicklist_case_sensitive "0" or "1"  "0" to have case insensitive nicklist,
+                                            "1" to have case sensitive nicklist.
+        nicklist_display_groups "0" or "1"  "0" to hide nicklist groups,
+                                            "1" to display nicklist groups.
+        highlight_words "-" or comma separated list of words
+	        "-" is a special value to disable any highlight on this buffer,
+            or comma separated list of words to highlight in this buffer,
+            for example: "abc,def,ghi".
+        highlight_words_add     comma separated list of words
+	        Comma separated list of words to highlight in this buffer,
+            these words are added to existing highlighted words in buffer.
+        highlight_words_del     comma separated list of words
+	        Comma separated list of words to remove from highlighted words on
+            buffer.
+        highlight_regex     any string  POSIX extended regular expression for
+                                        highlight.
+        highlight_tags_restrict     comma separated list of tags
+	        Restrict highlights to messages with these tags in this buffer
+            (it is possible to combine many tags as a logical "and" with
+            separator "+", for example: "nick_toto+irc_action").
+        highlight_tags  comma separated list of tags
+            Force highlight on messages with these tags in this buffer
+            (it is possible to combine many tags as a logical "and" with
+            separator "+", for example: "nick_toto+irc_action").
+        hotlist_max_level_nicks comma separated list of "nick:level"
+	        Comma separated list of nicks with max level for hotlist on this
+            buffer (level can be: -1: never in hotlist, 0: low, 1: message,
+             2: private, 3: highlight), for example: "joe:2,mike:-1,robert:-1"
+             (joe will never produce highlight on buffer, mike and robert
+             will never change hotlist).
+        hotlist_max_level_nicks_add     comma separated list of "nick:level"
+	        Comma separated list of nicks with level for hotlist, these nicks
+            are added to existing nicks in buffer.
+        hotlist_max_level_nicks_del     comma separated list of nicks
+	        Comma separated list of nicks to remove from hotlist max levels.
+        key_bind_xxx        any string  Bind a new key xxx, specific to this
+                                        buffer, value is command to execute
+                                        for this key.
+        key_unbind_xxx      -           Unbind key xxx for this buffer.
+        input               any string  Set new value for buffer input.
+        input_pos           position    Set cursor position in buffer input.
+        input_get_unknown_commands  "0" or "1"
+	        "0" to disable unknown commands on this buffer (default behavior),
+             "1" to get unknown commands, for example if user type "/unknowncmd",
+              buffer will receive it (no error about unknown command).
+        input_get_empty     "0" or "1"
+            "0" to disable empty input on this buffer (default behavior),
+            "1" to get empty input.
+        localvar_set_xxx    any string
+            Set new value for local variable xxx (variable is created if it
+            does not exist).
+        localvar_del_xxx            -       Remove local variable xxx.
+
+    .. code-block:: python
+        # examples
+
+        # disable hotlist (for all buffers)
+        weechat.buffer_set("", "hotlist", "-")
+
+        # enable again hotlist
+        weechat.buffer_set("", "hotlist", "+")
+
+        # change buffer name
+        weechat.buffer_set(my_buffer, "name", "my_new_name")
+
+        # add new local variable "toto" with value "abc"
+        weechat.buffer_set(my_buffer, "localvar_set_toto", "abc")
+
+        # remove local variable "toto"
+        weechat.buffer_set(my_buffer, "localvar_del_toto", "")
+
+    """
+
+    pass
+
+def buffer_string_replace_local_var(buffer: str, string: str) -> str:
+    """ Replace local variables in a string by their values, using buffer
+    local variables.
+
+    :param buffer: buffer pointer
+    :param string: string with text and local variables using format "$var"
+    :return: string with values of local variables
+
+    .. code-block:: python
+
+        # example
+        weechat.buffer_set(my_buffer, "localvar_set_toto", "abc")
+        str = weechat.buffer_string_replace_local_var(my_buffer, "test with $toto")
+        # str contains "test with abc"
+    """
+    pass
+
+def buffer_match_list(buffer: str, string: str) -> int:
+    """ Check if a buffer matches a list of buffers.
+
+    :param buffer: buffer pointer
+    :param string: comma separated list of buffers
+    :return: 1 if buffer matches list, otherwise 0
+
+    .. note::
+        "*" means all buffers
+        names beginning with "!" is excluded
+        wildcard * is allowed in name
+
+    .. code-block:: python
+
+        # example
+        buffer = weechat.buffer_search("irc", "freenode.#weechat")
+        if buffer:
+            weechat.prnt("", "%d" % weechat.buffer_match_list(buffer, "*"))
+                                # 1
+            weechat.prnt("", "%d" % weechat.buffer_match_list(buffer,
+                         "*,!*#weechat*"))        # 0
+            weechat.prnt("", "%d" % weechat.buffer_match_list(buffer,
+                         "irc.freenode.*"))       # 1
+            weechat.prnt("", "%d" % weechat.buffer_match_list(buffer,
+                         "irc.oftc.*,python.*"))  # 0
+    """
+    pass
+
+def current_window() -> str:
+    """ Returns pointer to current window.
+
+    :return: pointer to current window
+
+    .. code-block:: python
+        # example
+        current_window = weechat.current_window()
+
+    """
+    pass
+
+def window_search_with_buffer(buffer: str) -> str:
+    """ Return pointer to window displaying buffer.
+
+    :param buffer: buffer pointer
+    :return: pointer to window displaying buffer, NULL ("") if no window
+
+
+    .. code-block:: python
+        weechat.prnt("", "window displaying core buffer: %s"
+            % weechat.window_search_with_buffer(weechat.buffer_search_main()))
+
+    """
+    pass
+
+def window_get_integer(window: str, property_name: str) -> int:
+    """ Return integer value of a window property.
+
+    :param window: window pointer
+    :param property_name: name of property
+    :return: integer value of property
+
+    .. note::
+
+        Window properties:
+        number: number of window (starts to 1)
+        win_x: X position of window in terminal (first column is 0)
+        win_y: Y position of window in terminal (first line is 0)
+        win_width: width of window, in chars
+        win_height: height of window, in chars
+        win_width_pct: percentage size, compared to parent window
+                       (for example 50 means half size)
+        win_height_pct: percentage size, compared to parent window
+                        (for example 50 means half size)
+        win_chat_x: X position of chat window in terminal (first column is 0)
+        win_chat_y: Y position of chat window in terminal (first line is 0)
+        win_chat_width: width of chat window, in chars
+        win_chat_height: height of chat window, in chars
+        first_line_displayed: 1 if first line of buffer is displayed on screen,
+                              otherwise 0
+        scrolling: 1 if scroll is active on window (last line not displayed)
+        lines_after: number of lines not displayed after last one displayed
+                     (when scrolling)
+
+
+    .. code-block:: python
+
+        # example
+        weechat.prnt("", "current window is at position (x,y): (%d,%d)"
+            % (weechat.window_get_integer(weechat.current_window(), "win_x"),
+            weechat.window_get_integer(weechat.current_window(), "win_y")))
+
+    """
+    pass
+
+
+def window_get_string(window: str, property_name: str) -> str:
+    """ Return string value of a window property.
+
+    :param window: window pointer
+    :param property_name: property name
+    :return: string value of property
+
+    .. code-block:: python
+
+        value = weechat.window_get_string(window, property)
+
+    """
+    pass
+
+def window_get_pointer(window: str, property_name: str) -> str:
+    """ Return pointer value of a window property.
+
+    :param window: window pointer
+    :param property_name: property name
+    :return: pointer value of property
+
+    .. note::
+
+        property name:
+            current: current window pointer
+            buffer: pointer to buffer displayed by window
+
+
+    .. code-block:: python
+        weechat.prnt("", "buffer displayed in current window: %s"
+            % weechat.window_get_pointer(weechat.current_window(), "buffer"))
+    """
+    pass
+
+def window_set_title(title: str) -> None:
+    """ Sets title for terminal.
+
+    :param title: new title for terminal
+    :return: None
+
+    .. note::
+        "" will reset title
+        string is evaluated, variables like ${info:version} can be used
+    """
+    pass
+
+def nicklist_add_group(buffer: str, parent_group: str, name: str,
+                       color_name: str, visible: int) -> str:
+    """" Adds a group in a nicklist.
+
+    :param buffer: buffer pointer
+    :param parent_group: pointer to parent of group (NULL ("") if no parent)
+    :param name: group name
+    :param color_name: color option name
+    :param visible: 1 group/subgroups visible 0 group/subgroups hidden
+    :return: pointer to new group
+
+    .. note::
+
+        color options:
+
+        WeeChat option name : for example weechat.color.nicklist_group
+        color with optional background : for example yellow or yellow,red
+        bar color name:
+            bar_fg: foreground color for bar
+            bar_delim: delimiters color for bar
+            bar_bg: background color for bar
+
+    .. code-block:: python
+
+        # example
+        group = weechat.nicklist_add_group(my_buffer, my_parent_group,
+                                "test_group", "weechat.color.nicklist_group", 1)
+
+    """
+    pass
+
+def nicklist_search_group(buffer: str, from_group: str, name: str) -> str:
+    """ Search a group in a nicklist.
+
+    :param buffer: buffer pointer
+    :param from_group: search from this group, if NULL ("") search all nicklist
+    :param name: group name to search
+    :return: pointer to group found, NULL ("") if not found.
+
+    .. code-block:: python
+
+        group = weechat.nicklist_search_group(my_buffer, "", "test_group")
+
+    """
+    pass
+
+def nicklist_add_nick(buffer: str, group: str, name: str, color_option,
+                      nick_prefix: str, prefix_color: str, visible: int) -> str:
+    """
+
+    :param buffer: buffer pointer
+    :param group: group pointer
+    :param name: nick name
+    :param color_option: color option name, see notes
+    :param nick_prefix: prefix displayed before nick
+    :param prefix_color: color option name
+    :param visible: 1: nick is visible 0: nick is hidden
+
+    .. note::
+        Color Options for params prefix_color and color_option can be:
+
+        WeeChat option name (from weechat.color.xxx),
+            for example chat_delimiters
+        color with optional background, for example yellow or yellow,red
+        bar color name:
+            bar_fg: foreground color for bar
+            bar_delim: delimiters color for bar
+            bar_bg: background color for bar
+
+    .. code-block:: python
+
+        if nick_away:
+            color = "weechat.color.nicklist_away"
+        else:
+            color = "bar_fg"
+        nick = weechat.nicklist_add_nick(my_buffer, my_group, "test_nick",
+                                         color, "@", "lightgreen", 1)
+
+    """
+    pass
+
+def nicklist_search_nick(buffer: str, from_group: str, name: str) -> str:
+    """ Search a nick in a nicklist.
+
+    :param buffer: buffer pointer
+    :param from_group: search from this group only (if NULL "", search all)
+    :param name: name to search
+    :return: pointer to nick found, NULL ("") if not found
+
+    .. code-block:: python
+
+        nick = weechat.nicklist_search_nick(my_buffer, "", "test_nick")
+    """
+    pass
+
+def nicklist_remove_group(buffer: str, group: str) -> None:
+    """ Remove a group from a nicklist.
+
+    :param buffer: buffer pointer
+    :param group: group pointer to remove (all subgroups also removed)
+    :return: None
+
+    .. code-block:: python
+
+        weechat.nicklist_remove_group(my_buffer, my_group)
+
+    """
+    pass
+
+def nicklist_remove_nick(buffer: str, nick: str) -> None:
+    """ Remove a nick from a nicklist.
+
+    :param buffer: buffer pointer
+    :param nick: nick pointer to remove
+    :return: None
+
+    .. code-block:: python
+
+        weechat.nicklist_remove_nick(my_buffer, my_nick)
+
+    """
+    pass
+
+def nicklist_remove_all(buffer: str) -> None:
+    """ Remove all groups/nicks from a nicklist.
+
+    :param buffer: buffer pointer
+
+    .. code-block:: python
+        weechat.nicklist_remove_all(my_buffer)
+
+    """
+    pass
+
+def nicklist_group_get_integer(buffer: str, group: str,
+                               property_name: str) -> int:
+    """ Return integer value of a group property.
+
+    :param buffer: buffer pointer
+    :param group: group pointer
+    :param property_name: property name ("visible", "level")
+    :return: integer value of property
+
+    .. note::
+        return for "visible" = 1 if visible, or 0
+        return for "level" = group level (root is 0)
+
+    .. code-block:: python
+
+        visible = weechat.nicklist_group_get_integer(buffer, group, "visible")
+
+    """
+    pass
+
+
+def nicklist_group_get_string(buffer: str, group: str, property_name: str,
+                              color_name: str) -> str:
+    """ Return string value of a group property.
+
+    :param buffer: buffer pointer
+    :param group: group pointer
+    :param property_name: property name "name" or "color"
+    :return: string value of property
+
+    .. code-block:: python
+        color = weechat.nicklist_group_get_string(buffer, group, "color")
+    """
+    pass
+
+def nicklist_group_get_pointer(buffer: str, group: str,
+                               property_name: str) -> str:
+    """ Return pointer vale of a group property.deleter
+
+    :param buffer: buffer pointer
+    :param group: group pointer
+    :param property_name: property name "parent"
+    :return: pointer value of property
+
+    .. code-block:: python
+
+        parent = weechat.nicklist_group_get_pointer(buffer, group, "parent")
+
+    """
+    pass
+
+def nicklist_group_set(buffer: str, group: str, property_name: str,
+                       value: str) -> None:
+    """ Set string value of a group property.
+
+    :param buffer: buffer pointer
+    :param group: group pointer
+    :param property_name: property name (see notes)
+    :param value: new value of property
+    :return: None
+
+    .. note::
+
+        property_name value:
+        Name 	    Value 	                    Description
+        =====================================================================
+        color   WeeChat color option name       See argument "color" of
+                                                function nicklist_add_group.
+        visible     "0", "1"            "0" = hidden group, "1" = visible group.
+
+    .. code-block:: python
+        # change group color to "bar_fg"
+        weechat.nicklist_group_set(buffer, group, "color", "bar_fg")
+
+        # change group color to yellow
+        weechat.nicklist_group_set(buffer, group, "color", "yellow")
+
+        # hide group in nicklist
+        weechat.nicklist_group_set(buffer, group, "visible", "0")
+    """
+    pass
+
+def nicklist_nick_get_integer(buffer: str, nick: str, property_name: str) -> int:
+    """ Return integer value of a nick property.
+
+    :param buffer: buffer pointer
+    :param nick: nick pointer
+    :param property_name: property name "visible" (1 if visible, otherwise 0)
+    :return: integer value of property
+
+    .. code-block:: python
+
+        visible = weechat.nicklist_nick_get_integer(buffer, nick, "visible")
+
+    """
+    pass
+
+def nicklist_nick_get_string(buffer: str, nick: str, property_name: str) -> str:
+    """ Return string value of a nick property.
+
+    :param buffer: buffer pointer
+    :param nick: nick pointer
+    :param property_name: property name
+    :return: string value of property
+
+    .. note::
+        property_name values:
+            "name"          - name of nick
+            "color"         - nick color in nicklist
+            "prefix"        - prefix of nick
+            "prefix_color"  -  prefix color in nicklist
+
+    .. code-block:: python
+
+        color = weechat.nicklist_nick_get_string(buffer, nick, "color")
+
+    """
+    pass
+
+def nicklist_nick_get_pointer(buffer: str, nick: str,
+                              property_name: str) -> None:
+    """ Return pointer value of a nick property.
+
+    :param buffer: buffer pointer
+    :param nick: nick pointer
+    :param property_name: property name "group" (pointer to group contains nick)
+    :return: None
+
+    .. code-block::
+
+        group = weechat.nicklist_nick_get_pointer(buffer, nick, "group")
+
+    """
+    pass
+
+def nicklist_nick_set(buffer: str, nick: str, property_name: str,
+                      value: str) -> None:
+    """ Set string value of a nick property.
+
+
+    :param buffer: buffer pointer
+    :param nick: nick pointer
+    :param property_name: property names (see notes)
+    :param value: new value for property
+    :return: None
+
+    .. note::
+        Properties:
+            Name 	        Value 	                    Description
+        color           WeeChat color option name   See argument "color" of
+                                                    function nicklist_add_nick
+        prefix          any string                  Prefix of nick
+        prefix_color    WeeChat color option name   See argument "prefix_color"
+                                                 of function nicklist_add_nick
+        visible         "0", "1"        "0" = hidden nick, "1" = visible nick
+
+    .. code-block:: python
+
+        # examples
+
+        # change nick color to cyan
+        weechat.nicklist_nick_set(buffer, nick, "color", "cyan")
+
+        # change prefix to "+"
+        weechat.nicklist_nick_set(buffer, nick, "prefix", "+")
+
+        # change prefix color to yellow
+        weechat.nicklist_nick_set(buffer, nick, "prefix_color", "yellow")
+
+        # hide nick in nicklist
+        weechat.nicklist_nick_set(buffer, nick, "visible", "0")
+
+
+    """
+    pass
+
+def bar_item_search(name: str) -> str:
+    """ Search a bar item.
+
+    :param name: bar item name
+    :return: pointer to bar item found, NULL ("") if not found.
+
+    .. code-block:: python
+
+        bar_item = weechat.bar_item_search("myitem")
+
+    """
+    pass
+
+def bar_item_new(name: str, build_callback: str,
+                 build_callback_data: str) -> str:
+    """ Creates a nwe bar item.
+
+    :param name: bar item name
+    :param build_callback: function called when bar item is built
+    :param build_callback_data: pointer given to build callback
+    :return: pointer to new bar item, NULL ("") if error occurred
+
+    .. note::
+
+        For compatibility with versions ≤ 0.4.1, the default callback has only
+        3 arguments: data, item and window (no buffer and extra_info).
+        To use a callback with all arguments, you must add "(extra)" before the
+        name, see example below (supported only in WeeChat ≥ 0.4.2).
+
+    .. code-block:: python
+        # example (callback without "buffer" and "extra_info")
+        def my_build_callback(data, item, window):
+            return "my content"
+
+        bar_item = weechat.bar_item_new("myitem", "my_build_callback", "")
+
+        # example (callback with all arguments)
+        def my_build_callback2(data, item, window, buffer, extra_info):
+            return "my content"
+
+        bar_item2 = weechat.bar_item_new("(extra)myitem2",
+                                         "my_build_callback2", "")
+
+    """
+    pass
+
+def bar_item_update(name: str) -> None:
+    """ Update content of a bar item, by calling it's build callback.
+
+    :param name: bar item name
+
+
+    .. code-block:: python
+
+        weechat.bar_item_update("myitem")
+
+    """
+    pass
+
+def bar_item_remove(item: str) -> None:
+    """ Remove a bar item.
+
+    :param item: bar item pointer
+
+    .. code-block:: python
+
+        weechat.bar_item_remove(myitem)
+
+    """
+    pass
+
+
+def bar_search(name: str) -> str:
+    """ Search a bar.
+
+    :param name: bar name
+    :return: pointer to bar found. NULL ("") if bar was not found
+
+    .. code-block:: python
+
+        bar = weechat.bar_search("mybar")
+
+    """
+    pass
+
+def bar_new(name: str, hidden: str, priority: str, bar_type: str,
+            condition: str, position: str, filling_top_bottom: str,
+            filling_left_right: str, size: str, size_max: str, color_fg: str,
+            color_delim: str, colof_bg: str, separator: str, items: str) -> str:
+    """ Creates a new bar.
+
+    :param name: bar name
+    :param hidden: "on" (bar is hidden) "off" (bar is visible)
+    :param priority: bar priority (integer as string ex "100")
+    :param bar_type: "root" , "window"
+    :param condition: condition for displaying bar
+    :param postion: "top" , "bottom", "left" or "right"
+    :param filing_top_bottom: "horizontal", "vertical", "columns_horizontal",
+    "columns_vertical"
+    :params filling_left_right: "horizontal", "vertical", "columns_horizontal",
+    "columns_vertical"
+    :param size: bar size in chars (0 means automatic size)
+    :param size_max: max size for bar (0 means no max size)
+    :param color_fg: color for text in bar
+    :param color_delim: color for delimiters in bar
+    :param color_bg: background color for bar
+    :param separator: "on" (separator line other windows) "off (no separator)
+    :param items: list of items in bar, separated by comma, or "+" glued items
+    :return: pointer to new bar, NULL ("") if error occurred
+
+    .. code-block:: python
+
+        bar = weechat.bar_new("mybar", "off", "100", "window", "", "top",
+                              "horizontal", "vertical", "0", "5", "default",
+                              "cyan", "blue", "off",
+                              "time,buffer_number+buffer_name")
+
+    """
+    pass
+
+def bar_set(weechat_bar: str, property_name: str, value: str) -> int:
+    """ Set a new value for a bar property.
+
+    :param weechat_bar: bar pointer
+    :param property_name: property name (see notes)
+    :param value: new value for property
+    :return: 1 if new value was set, 0 if an error occurred.
+
+    .. notes::
+        Bar properties:
+        "hidden", "condition", "priority", "conditions", "position"
+        "filling_top_bottom", "filling_left_right", "size", "size_max"
+        "color_fg", "color_delim", "color_bg", "separator", "items"
+
+    .. code-block:: python
+
+        weechat.bar_set(my_bar, "position", "bottom")
+
+    """
+    pass
+
+def bar_update(name: str) -> None:
+    """ Refresh content of a bar on screen.
+
+    :param name: bar name
+    :return: None
+
+    .. code-block:: python
+
+        weechat.bar_update("mybar")
+
+    """
+    pass
+
+def bar_remove(name: str) -> None:
+    """ Remove a bar.
+
+    :param name: bar pointer
+    :return: None
+
+    .. code-block:: python
+
+        weechat.bar_remove(my_bar)
+
+    """
+    pass
+
+def command(buffer: str, cmd: str) -> int:
+    """ Execute a command or send text to buffer.
+
+    :param buffer: buffer pointer (use NULL ("") for current buffer)
+    :param cmd: command to execute (if starts with "/" else send to buffer)
+    :return: WEECHAT_RC_OK if success, WEECHAT_RC_ERROR if errof
+
+    .. code-block:: python
+
+        rc = weechat.command(weechat.buffer_search("irc", "freenode.#weechat"),
+                             "/whois FlashCode")
+
+    """
+    pass
+
+def command_options(buffer: str, cmd: str, options: dict) -> int:
+    """ Execute a command or send text to buffer with options.
+
+    :param buffer: buffer pointer (use NULL ("") for current buffer)
+    :param cmd: command to execute (if starts with "/" else send to buffer)
+    :param options: a dict with some options (can be Null {})
+    :return: WEECHAT_RC_OK if sucess, WEECHAT_RC_ERROR if error
+
+    .. code-block:: python
+
+        rc = weechat.command("", "/some_command arguments",
+                             {"commands": "*,!exec"})
+
+    """
+    pass
+
+def info_get(info_name: str, arguments: str) -> str:
+    """ Returns info, as string, from WeeChat or a plugin.
+
+    :param info_name: name of info to read (see notes)
+    :param arguments: arguments for info asked (optional) (NULL ("") if none)
+    :return: string with info asked, NULL ("") if an error occurred
+
+    .. note::
+
+        Plugin 	    Name 	        Description
+        fifo    fifo_filename       name of FIFO pipe
+        guile   guile_eval          evaluation of source code
+                                    (args: source code to execute)
+        guile   guile_interpreter   name of the interpreter used
+        guile   guile_version       version of the interpreter used
+        irc     irc_buffer          get buffer pointer for an IRC server/channel
+                                    /nick  (args: server,channel,nick)
+                                                (channel and nicks are optional)
+        irc     irc_is_channel      1 if string is a valid IRC channel name for
+                                    server      (args: server,channel)
+                                                (server is optional)
+        irc     irc_is_nick         1 if string is a valid IRC nick name
+                                                (args: nickname)
+        irc     irc_nick            get current nick on a server
+                                                (args: server name)
+        irc     irc_nick_color      get nick color code (deprecated since
+                                    version 1.5, replaced by "nick_color")
+                                    (args: nickname)
+        irc     irc_nick_color_name get nick color name (deprecated since
+                                     version 1.5, replaced by "nick_color_name")
+                                    (args: nickname)
+        irc     irc_nick_from_host  get nick from IRC host
+                                    (args: IRC host (like :nick!name@server.com)
+        irc     irc_server_isupport 1 if server supports this feature
+                                        (from IRC message 005)
+                                        (args: server,feature)
+        irc     irc_server_isupport_value   value of feature, if supported by
+                                            server (from IRC message 005)
+                                            (args: server, feature)
+        javascript  javascript_eval         evaluation of source code
+                                            (args: source code to execute)
+        javascript  javascript_interpreter  name of the interpreter used
+        javascript  javascript_version      version of the interpreter used
+	    lua         lua_eval                evaluation of source code
+                                            (args: source code to execute)
+        lua         lua_interpreter         name of the interpreter used
+        lua         lua_version             version of the interpreter used
+        perl        perl_eval               evaluation of source code
+                                            (args: source code to execute)
+        perl        perl_interpreter        name of the interpreter used
+        perl        perl_version            version of the interpreter used
+        php         php_eval                evaluation of source code
+                                            (args: source code to execute)
+        php         php_interpreter         name of the interpreter used
+        php         php_version             version of the interpreter used
+        python      python2_bin             path to python 2.x interpreter
+        python      python_eval             evaluation of source code
+                                            (args: source code to execute)
+        python      python_interpreter      name of the interpreter used
+        python      python_version          version of the interpreter used
+        relay       relay_client_count      number of clients for relay
+                                            (args: protocol,status
+                                            (both are optional, for each
+                                            argument "*" means all;
+                                            protocols: irc, weechat;
+                                            statuses: connecting, waiting_auth,
+                                            connected, auth_failed, disconnected)
+        ruby        ruby_eval               evaluation of source code
+                                            (args: source code to execute)
+        ruby        ruby_interpreter        name of the interpreter used
+        ruby        ruby_version            version of the interpreter used
+        spell       spell_dict              comma-separated list of dictionaries
+                                            used in buffer
+                                            (args: buffer pointer ("0x12345678")
+                                            or buffer full name
+                                            ("irc.freenode.#weechat")
+        tcl         tcl_eval                evaluation of source code
+                                            (args: source code to execute)
+        tcl         tcl_interpreter         name of the interpreter used
+        tcl         tcl_version             version of the interpreter used
+        weechat     charset_internal        WeeChat internal charset
+        weechat     charset_terminal        terminal charset
+        weechat     color_ansi_regex        POSIX extended regular expression
+                                            to search ANSI escape codes
+        weechat     color_rgb2term          RGB color converted to terminal
+                                            color (0-255)
+                                            (args: rgb,limit (limit is optional
+                                            and is set to 256 by default)
+        weechat     color_term2rgb          terminal color (0-255) converted to
+                                            RGB color
+                                            (args: color (terminal color: 0-255))
+        weechat     cursor_mode             1 if cursor mode is enabled
+        weechat     date                    WeeChat compilation date/time
+        weechat     dir_separator           directory separator
+        weechat     filters_enabled         1 if filters are enabled
+        weechat     inactivity              keyboard inactivity (seconds)
+        weechat     locale                  locale used for translating messages
+        weechat     nick_color              get nick color code
+                                            (args: nickname)
+        weechat     nick_color_name         get nick color name
+                                            (args: nickname)
+        weechat     pid                     WeeChat PID (process ID)
+        weechat     term_color_pairs        number of color pairs supported in
+                                            terminal
+        weechat     term_colors             number of colors supported in
+                                            terminal
+	    weechat     term_height             height of terminal
+        weechat     term_width              width of terminal
+        weechat     totp_generate           generate a Time-based One-Time
+                                            Password (TOTP)
+                                            (args: secret (in base32),
+                                            timestamp (optional, current time
+                                            by default), number of digits
+                                            (optional, between 4 and 10, 6
+                                            by default)
+        weechat     totp_validate           validate a Time-based One-Time
+                                            Password (TOTP): 1 if TOTP is
+                                            correct, otherwise 0
+                                            (args: secret (in base32),
+                                            one-time password, timestamp
+                                            (optional, current time by default),
+                                            number of passwords before/after
+                                            to test (optional, 0 by default)
+        weechat     uptime                  WeeChat uptime
+                                            (format: "days:hh:mm:ss")
+                                            (args: "days" (number of days) or
+                                            "seconds" (number of seconds)
+                                            (optional)
+        weechat     version                 WeeChat version
+        weechat     version_git             WeeChat git version (output of
+                                            command "git describe" for a
+                                            development version only,
+                                            empty for a stable release)
+        weechat     version_number          WeeChat version (as number)
+        weechat     weechat_dir             WeeChat directory
+        weechat     weechat_libdir          WeeChat "lib" directory
+        weechat     weechat_localedir       WeeChat "locale" directory
+        weechat     weechat_sharedir        WeeChat "share" directory
+        weechat     weechat_site            WeeChat site
+        weechat     weechat_site_download   WeeChat site, download page
+        weechat     weechat_upgrading       1 if WeeChat is upgrading
+                                            (command /upgrade)
+
+    .. code-block::
+        # example
+        weechat.prnt("", "Current WeeChat version is: %s (compiled on %s)"
+            % (weechat.info_get("version", ""), weechat.info_get("date", ""))
+        weechat.prnt("", "WeeChat home is: %s" %
+                     weechat.info_get("weechat_dir", ""))
 
     """
     pass
