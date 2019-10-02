@@ -2,26 +2,34 @@
 Dummy weechat python module.
 
     Purpose:
-        To add code completion/documentation/Intellisense for weechat by
-        providing a "dummy" module to satisfy the "import weechat" statement
-        in python weechat scripts when creating or editing python weechat
-        scripts in Pycharm/vscode and similar code editors.
-        This module is designed for python (3.x), WeeChat (2.4-2.6), and
-        new scripters who don't know the WeeChat scripting API by heart or
-        want to reduce the amount of time they need to spend digging
-        around for correct syntax.
-    How To Use:
-        Place this module in a location which will allow your python environment
-        to import it to satisfy your "import weechat" script statement.
-        (Same directory typically will work (python 3+))
 
-        You should now see function names, parameter information and
-        documentation when using intellisense features of your editor.
-        Function, parameter, examples and other info were gathered
-        from : https://weechat.org/files/doc/stable/weechat_plugin_api.en.html
-        and edited to reflect scripting for python specifically.
+        To add code completion, intellisense and documentation to code editors,
+        as well as supress errors resulting from code editors not finding the
+        "weechat" module (imported at the beginning of a weechat script). This
+        should help reduce typographical and other syntax errors while
+        creating/editing scripts. This module is designed for python (3.x)
+        and WeeChat (2.4-2.6). Pycharm and vscode are used to test the output of
+        the docstrings included in this module. This module is a work in
+        progress and may change depending on what quick documentation and other
+        code editing features scripters find useful that can be provided.
+        I am still experimenting with support for the various docstring formats
+        (restructuredText, etc) and code examples do not diplay in Pycharm.
+        Function, parameter, examples and other info were gathered from :
+        https://weechat.org/files/doc/stable/weechat_plugin_api.en.html
+        and edited to reflect the scripting api only, and python specifically.
+
+    How To Use:
+
+        Place this module in a location which will allow your python environment
+        to import it and satisfy the "import weechat" statement used in WeeChat
+        scripts. (Same directory typically will work (python 3+)). You should
+        now see function names, parameter information and other documentation
+        when using a code editor which provides such functionality from
+        docstrings.
+
     Version / Revision History:
-        1.0 - Initial Version
+        1.0 - Initial Version - most functions documented
+        1.1 - all functions in scripting API present
     Credits:
         Sébastien Helleu flashcode@flashtux.org :
             Author of WeeChat, who's Scripting API and Plugin API references:
@@ -3735,6 +3743,7 @@ def info_get(info_name: str, arguments: str) -> str:
                                             (command /upgrade)
 
     .. code-block::
+
         # example
         weechat.prnt("", "Current WeeChat version is: %s (compiled on %s)"
             % (weechat.info_get("version", ""), weechat.info_get("date", ""))
@@ -3743,6 +3752,906 @@ def info_get(info_name: str, arguments: str) -> str:
 
     """
     pass
+
+def info_get_hashtable(info_name: str, hashtable: dict) -> dict:
+    """ Return info, as hashtable, from WeeChat or a plugin.
+
+    :param info_name: name of info to read (see notes)
+    :param hashtable: hastable/dict with arguments (optional can be ("") NULL)
+    :return: hashtable/dict with info asked. NULL ("") if error occurred
+
+    .. note::
+
+        irc     irc_message_parse           parse an IRC message
+                input dict key/values:
+                    "message" : IRC message
+                    "server"  : server name (optional)
+                output dict  key/values:
+                    "tags" : tags
+                    "message_without_tags": message without tags,
+                    "nick": nick
+                    "host": host
+                    "command": command,
+                    "channel": channel,
+                    "arguments": arguments (includes channel),
+                    "text": text (for example user message),
+                    "pos_command": index of "command" message("-1" if
+                                   "command" was not found),
+                    "pos_arguments": index of "arguments" message
+                                     ("-1" if "arguments" was not found),
+                    "pos_channel": index of "channel" message
+                                   ("-1" if "channel" was not found),
+                    "pos_text": index of "text" message
+                                ("-1" if "text" was not found)
+
+        irc     irc_message_split   split an IRC message
+                                    (to fit in 512 bytes by default)
+                input dict:
+                    "message": IRC message,
+                    "server": server name (optional)
+                output dict:
+                    "msg1" …​ "msgN": messages to send (without final "\r\n"),
+                    "args1" …​ "argsN": arguments of messages,
+                    "count": number of messages
+
+    .. code-block:: python
+
+        dict_in = {"message": ":nick!user@host PRIVMSG #weechat :message here"}
+        weechat.prnt("", "message parsed: %s"
+                    % weechat.info_get_hashtable("irc_message_parse", dict_in))
+
+    """
+    pass
+
+def infolist_new() -> str:
+    """ Create a new infolist.
+
+    :return: pointer to a new infolist
+
+    .. note::
+
+        An infolist is a list of "items". Each item contains variables. For
+        example, infolist "irc_server" has N items (N is number of IRC servers
+        defined). For each item, there is variables like "name", "buffer",
+        "is_connected", …​
+        Each variable has a type and a value. Possible types are:
+            integer: any integer value
+            string: any string value
+            pointer: any pointer
+            buffer: buffer with fixed length, containing any data
+            time: time value
+
+    """
+    pass
+
+def infolist_new_item(infolist: str) -> str:
+    """ Add an item in an infolist.
+
+    :param infolist: infolist pointer
+    :return: pointer to new item
+
+    .. code-block:: python
+        item = weechat.infolist_new_item(infolist)
+
+    """
+    pass
+
+def infolist_new_var_integer(item: str, name: str, value: int) -> str:
+    """ Add an integer variable to an infolist item.
+
+    :param item: infolist item pointer
+    :param name: variable name
+    :param value: integer value
+    :return: pointer to new variable
+
+    .. code-block:: python
+        var = weechat.infolist_new_var_integer(item, "my_integer", 123)
+
+    """
+    pass
+
+def infolist_new_var_string(item: str, name: str, value: str) -> str:
+    """ Add a string variable to an infolist item.
+
+    :param item: infolist item pointer
+    :param name: variable name
+    :param value: string value
+    :return: pointer to new variable
+
+    .. code-block:: python
+
+        var = weechat.infolist_new_var_string(item, "my_string", "value")
+
+    """
+    pass
+
+def infolist_new_var_pointer(item: str, name: str, pointer: str) -> str:
+    """ Add a pointer variable to an infolist item.
+
+    :param item: infolist item pointer
+    :param name: variable name
+    :param pointer: pointer value
+    :return: pointer to new variable
+
+    .. code-block:: python
+
+        var = weechat.infolist_new_var_pointer(item, "my_pointer", pointer)
+
+    """
+    pass
+
+def infolist_new_var_time(item: str, name: str, time_value: int) -> str:
+    """ Add a time variable to an infolist item.
+
+    :param item: infolist item pointer
+    :param name: variable name
+    :param time_value: time value
+    :return: pointer to new variable
+
+    .. code-block:: python
+
+        var = weechat.infolist_new_var_time(item, "my_time",
+                                            int(time.time()))
+
+
+    """
+    pass
+
+def infolist_get(name: str, pointer: str, arguments: str) -> str:
+    """ Return infolist from WeeChat or a plugin.
+
+
+    :param name: name of infolist to read (see notes)
+    :param pointer: pointer to an item (get only this item) Optional NULL ("")
+    :param arguments: arguments for infolist asked (optional/NULL/"")
+    :return: pointer to infolist
+
+    .. note::
+
+        Plugin          Name            Description
+        alias       alias               list of aliases
+                        - args: alias name (wildcard "*" is allowed) (optional)
+        alias       alias_default       list of default aliases
+	    buflist     buflist             list of buffers in a buflist bar item
+                        - args: buflist bar item name (optional)
+        fset        fset_option         list of fset options
+                        - args: option name (wildcard "*" is allowed) (optional)
+        guile       guile_script        list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        irc         irc_channel         list of channels for an IRC server
+                        - args: server,channel (channel is optional)
+        irc         irc_color_weechat   mapping between IRC color codes and
+                                        WeeChat color names
+        irc         irc_ignore          list of IRC ignores
+        irc         irc_modelist   list of channel mode lists for an IRC channel
+                        - args: server,channel,type (type is optional)
+        irc         irc_modelist_item   list of items in a channel mode list
+                        - args: server,channel,type,number (number is optional)
+        irc         irc_nick            list of nicks for an IRC channel
+                        - args: server,channel,nick (nick is optional)
+        irc         irc_notify          list of notify
+                        - args: server name (wildcard "*" is allowed) (optional)
+        irc         irc_server          list of IRC servers
+                        - args: server name (wildcard "*" is allowed) (optional)
+        javascript  javascript_script   list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        logger      logger_buffer       list of logger buffers
+        lua         lua_script          list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        perl        perl_script         list of scripts
+                        - args script name (wildcard "*" is allowed) (optional)
+        php         php_script          list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        python      python_script       list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        relay       relay               list of relay clients
+        ruby        ruby_script         list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        script      script_script       list of scripts
+                        - args: script name with extension
+                                (wildcard "*" is allowed) (optional)
+        tcl         tcl_script          list of scripts
+                        - args: script name (wildcard "*" is allowed) (optional)
+        weechat     bar                 list of bars
+                        - args: bar name (wildcard "*" is allowed) (optional)
+        weechat     bar_item            list of bar items
+                        - args: bar item name (wildcard "*" allowed) (optional)
+        weechat     bar_window          list of bar windows
+        weechat     buffer              list of buffers
+                        - args: buffer name (wildcard "*" is allowed) (optional)
+        weechat     buffer_lines        lines of a buffer
+        weechat     filter              list of filters
+                        - args: filter name (wildcard "*" is allowed) (optional)
+        weechat     history             history of commands
+                        - args: buffer pointer (if not set, return global
+                                history) (optional)
+        weechat     hook                list of hooks
+                        - args: type,arguments (type is command/timer/..,
+                                arguments to get only some hooks (wildcard "*"
+                                is allowed), both are optional)
+        weechat     hotlist             list of buffers in hotlist
+        weechat     key                 list of key bindings
+                        - args: context ("default", "search", "cursor" or
+                                "mouse") (optional)
+        weechat     layout              list of layouts
+        weechat     nicklist            nicks in nicklist for a buffer
+                        - args: nick_xxx or group_xxx to get only nick/group
+                                xxx (optional)
+        weechat     option              list of options
+                        - args: option name (wildcard "*" is allowed) (optional)
+        weechat     plugin              list of plugins
+                        - args: plugin name (wildcard "*" is allowed) (optional)
+        weechat     proxy               list of proxies
+                        - args: proxy name (wildcard "*" is allowed) (optional)
+        weechat     url_options         options for URL
+        weechat     window              list of windows
+                        - args: "current" for current window or a window
+                                number (optional)
+        xfer        xfer                list of xfer
+
+
+    .. code-block:: python
+
+        infolist = weechat.infolist_get("irc_server", "", "")
+
+    """
+    pass
+
+
+def infolist_next(infolist: str) -> int:
+    """ Move "cursor" to next item in an infolist.
+
+    :param infolist: infolist pointer
+    :return: 1 if cursor has been moved to next item, 0 if end of list
+
+    .. note::
+        The first call to this function for an infolist moves cursor to
+        first item in infolist.
+
+    .. code-block:: python
+
+        rc = weechat.infolist_next(infolist)
+        if rc:
+            # read variables in item...
+        else:
+            # no more item available
+    """
+    pass
+
+
+def infolist_prev(infolilst: str) -> int:
+    """ Move "cursor" to previous item in an infolist.
+
+    :param infolist: infolist pointer
+    :return: 1 if cursor has been moved to previous item, 0 if start of list
+
+    .. note::
+        The first call to this function for an infolist moves cursor to last
+        item in infolist.
+
+    .. code-block:: python
+
+        rc = weechat.infolist_prev(infolist)
+        if rc:
+            # read variables in item...
+        else:
+            # no more item available
+    """
+    pass
+
+def infolist_reset_item_cursor(infolist: str) -> None:
+    """ Reset "cursor" for infolist.
+
+    :param infolist: infolist pointer
+
+    .. code-block:: python
+
+        weechat.infolist_reset_item_cursor(infolist)
+
+    """
+    pass
+
+def infolist_search_var(infolist: str, name: str) -> str:
+    """ Search a variable in the current infolist item.
+
+    :param infolist: infolist pointer
+    :param name: variable name
+    :return: pointer to variable found. NULL ("") if not found
+
+    .. code-block:: python
+
+        if weechat.infolist_search_var(infolist, "name"):
+            # variable "name" exists
+            # ...
+
+    """
+    pass
+
+def infolist_fields(infolist: str) -> str:
+    """ Return list of fields for current infolist item.
+
+    :param infolist: infolist pointer
+    :return: string with list of fields for current infolist item
+
+    .. note::
+
+        List returned is omma separated, and contains letter for type, followed
+        by variable name. Types are: "i" (integer), "s" (string), "p" (pointer),
+        "b" (buffer), "t" (time).
+
+
+    .. code-block:: python
+
+        fields = weechat.infolist_fields(infolist)
+        # fields contains something like:
+        # "i:my_integer,s:my_string,p:my_pointer,b:my_buffer,t:my_time"
+
+    """
+    pass
+
+def infolist_integer(infolist: str, var_name: str) -> int:
+    """ Return value of integer variable in current infolist item.
+
+    :param infolist: infolist pointer
+    :param var_name: variable name (must be type "integer")
+    :return: integer value of variable
+
+    .. code-block:: python
+
+        weechat.prnt("", "integer = %d" % weechat.infolist_integer(infolist,
+                     "my_integer"))
+
+    """
+    pass
+
+def infolist_string(infolist: str, var_name: str) -> str:
+    """ Return value of string variable in current infolist item.
+
+    :param infolist: infolist pointer
+    :param var_name: variable name (must be type "string")
+    :return: string value of variable
+
+    .. code-block:: python
+
+        weechat.prnt("", "string = %s" %
+                     weechat.infolist_string(infolist, "my_string"))
+
+    """
+    pass
+
+def infolist_pointer(infolist: str, var_name: str) -> str:
+    """ Return value of pointer variable in current infolist item.
+
+    :param infolist: infolist pointer
+    :param var_name: variable name (must be type "pointer")
+    :return: pointer value of variable
+
+    .. code-block:: python
+
+        weechat.prnt("", "pointer = 0x%s" %
+                     weechat.infolist_pointer(infolist, "my_pointer"))
+
+    """
+    pass
+
+def infolist_time(infolist: str, var_name: str) -> int:
+    """ Return value of time variable in current infolist item.
+
+    :param infolist: infolist pointer
+    :param var_name: variable name (must be type "time")
+    :return: time value of variable (integer)
+
+    .. code-block:: python
+
+        weechat.prnt("", "time = %ld" %
+                     weechat.infolist_time(infolist, "my_time"))
+
+    """
+    pass
+
+def infolist_free(infolist: str) -> None:
+    """ Free an infolist.
+
+    :param infolist: infolist pointer
+    :return: None
+
+    .. code-block:: python
+
+        weechat.infolist_free(infolist)
+
+    """
+    pass
+
+def hdata_get(hdata_name: str) -> str:
+    """ Return hdata for a WeeChat or plugin structure.
+
+    :param hdata_name: name of hdata (see notes)
+    :return: pointer to hdata (NULL or "" if error occurred)
+
+    .. note::
+        https://weechat.org/files/doc/stable/weechat_plugin_api.en.html#_hdata_get
+
+        // TODO : inline hdata lists ?
+
+    """
+    pass
+
+def hdata_get_var_offset(hdata: str, name: str) -> int:
+    """ Return offset of variable in hdata.
+
+    :param hdata: hdata pointer
+    :param name: variable name
+    :return: variable offset, 0 if an error occurred
+
+    .. code-block:: python
+
+        offset = weechat.hdata_get_var_offset(hdata, "name")
+
+    """
+    pass
+
+def hdata_get_var_type_string(hdata: str, name: str) -> str:
+    """ Return type of variable in hdata (as string).
+
+    :param hdata: hdata pointer
+    :param name: variable name
+    :return: variable type, NULL ("") if error occurred
+
+    .. code-block:: python
+
+        weechat.prnt("", "type = %s" %
+                     weechat.hdata_get_var_type_string("name"))
+
+
+    """
+    pass
+
+def hdata_get_var_array_size(hdata: str, pointer: str, name: str) -> int:
+    """ Return array size for variable in hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to weechat plugin object
+    :param name: variable name
+    :return: array size for variable, -1 if not an array or error occurred
+
+    .. code-block:: python
+
+        array_size = weechat.hdata_get_var_array_size(hdata, pointer, "name")
+
+    """
+    pass
+
+def hdata_get_var_array_size_string(hdata: str, pointer: str, name: str) -> str:
+    """ Return array size for variable in hdata (as string).
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to weechat plugin object
+    :param name: variable name
+    :return: array size for variable as string. NULL ("") if not array or error
+
+    .. code-block:: python
+
+        array_size = weechat.hdata_get_var_array_size_string(hdata, pointer,
+                                                             "name")
+
+    """
+    pass
+
+def hdata_get_var_hdata(hdata: str, name: str) -> str:
+    """ Return hdata for a variable in hdata.
+
+    :param hdata: hdata pointer
+    :param name: variable name
+    :return: hdata for variable, NULL ("") if no hdata or error occurred
+
+    .. code-block:: python
+
+        weechat.prnt("", "hdata = %s" %
+                     weechat.hdata_get_var_hdata(hdata, "name"))
+
+    """
+    pass
+
+def hdata_get_list(hdata: str, name: str) -> str:
+    """ Return list pointer from hdata.
+
+    :param hdata: hdata pointer
+    :param name: list name
+    :return: list pointer (NULL "" if error occurred)
+
+    .. code-block:: python
+
+        hdata = weechat.hdata_get("buffer")
+        buffers = weechat.hdata_get_list(hdata, "gui_buffers")
+
+    """
+    pass
+
+def hdata_check_pointer(hdata: str, list_pointer, pointer: str) -> int:
+    """ Check if a pointer is valid for a hdata and a list pointer.
+
+    :param hdata: hdata pointer
+    :param list_pointer: list pointer (see notes)
+    :param pointer: pointer to check
+    :return: 1 if pointer is in list, 0 if not found
+
+    .. note::
+
+        list pointer : if NULL (WeeChat ≥ 1.0), the pointer is checked with the
+        lists in hdata that have flag "check pointers" (see hdata_new_list),
+         and if no such list exists, the pointer is considered as valid
+
+    .. code-block:: python
+
+        hdata = weechat.hdata_get("buffer")
+        if weechat.hdata_check_pointer(hdata, weechat.hdata_get_list(hdata, "gui_buffers"), ptr_buffer):
+            # valid pointer
+            # ...
+        else:
+            # invalid pointer
+            # ...
+
+    """
+    pass
+
+def hdata_move(hdata: str, pointer: str, count: int) -> str:
+    """ Move pointer to another element in list.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to a WeeChat/plugin object
+    :param count: number of jump(s) to execute (negative or positive)
+    :return: pointer to element reached. NULL ("") if not found or error
+
+
+    .. code-block:: python
+
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer = weechat.buffer_search_main()
+
+        # move to next buffer, 2 times
+        buffer = weechat.hdata_move(hdata, buffer, 2)
+
+        # move to previous buffer
+        if buffer:
+            buffer = weechat.hdata_move(hdata, buffer, -1)
+
+    """
+    pass
+
+
+def hdata_search(hdata: str, pointer: str, search: str, move: int) -> str:
+    """ Search element in a list.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to a WeeChat/plugin object
+    :param search: expression to evaluate
+    :param move: number of jump(s) to excute after unsuccessful search
+    :return: pointer to element found, NULL ("") if not found
+
+    .. note::
+
+        The expression search is evaluated for each element in list,
+        until element is found (or end of list).
+        Default pointer in expression is the name of hdata (and this pointer
+        changes for each element in list); for help on expression, see the
+        WeeChat user’s guide / Command /eval
+
+    .. code-block:: python
+
+        # example
+        hdata = weechat.hdata_get("irc_server")
+        servers = weechat.hdata_get_list(hdata, "irc_servers")
+
+        # search irc server with name "freenode"
+        server = weechat.hdata_search(hdata, servers,
+                                      "${irc_server.name} == freenode", 1)
+        if server:
+            # ...
+
+    """
+    pass
+
+def hdata_char(hdata: str, pointer: str, name: str) -> str:
+    """ Return value of char variable in a structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name
+    :return: value of variable
+
+    .. code-block:: python
+
+        weechat.prnt("", "letter = %c" %
+                     weechat.hdata_char(hdata, pointer, "letter"))
+
+    """
+    pass
+
+def hdata_integer(hdata: str, pointer: str, name: str) -> int:
+    """ Return value of integer variable in a structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name
+    :return: integer value of variable
+
+    .. code-block:: python
+
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer = weechat.buffer_search_main()
+        weechat.prnt("", "number = %d" %
+                     weechat.hdata_integer(hdata, buffer, "number"))
+
+    """
+    pass
+
+def hdata_long(hdata: str, pointer: str, name: str) -> int:
+    """ Return value of long variable in a structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name
+    :return: long value of variable
+
+    .. code-block:: python
+
+        weechat.prnt("", "long_var = %ld" %
+                     weechat.hdata_long(hdata, buffer, "number"))
+
+    """
+    pass
+
+
+def hdata_string(hdata: str, pointer: str, name: str) -> str:
+    """ Return value of string variable in a structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name
+    :return: string value of variable
+
+    .. code-block:: python
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer = weechat.buffer_search_main()
+        weechat.prnt("", "name = %s" %
+                     weechat.hdata_string(hdata, buffer, "name"))
+
+    """
+    pass
+
+def hdata_pointer(hdata: str, pointer: str, name: str) -> str:
+    """ Return value of pointer variable in structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name (must be type pointer)
+    :return: pointer value of variable
+
+    .. code-block:: python
+
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer = weechat.buffer_search_main()
+        weechat.prnt("", "lines = %lx" %
+                     weechat.hdata_pointer(hdata, buffer, "lines"))
+
+    """
+    pass
+
+def hdata_time(hdata: str, pointer: str, name: str) -> int:
+    """ Return value of time variable in structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name (must be type "time")
+    :return: time value of variable
+
+    .. code-block:: python
+        # example
+        buf = weechat.buffer_search_main()
+        ptr = weechat.hdata_pointer(weechat.hdata_get("buffer"), buf, "lines")
+        if ptr:
+            ptr = weechat.hdata_pointer(weechat.hdata_get("lines"), ptr,
+                                        "first_line")
+            if ptr:
+                ptr = weechat.hdata_pointer(weechat.hdata_get("line"),
+                                            ptr, "data")
+                if ptr:
+                    date = weechat.hdata_time(weechat.hdata_get("line_data"),
+                                              ptr, "date")
+                    weechat.prnt("", "time of first line displayed = %s" %
+                                 time.strftime("%F %T",
+                                 time.localtime(int(date))))
+
+    """
+    pass
+
+
+def hdata_hashtable(hdata: str, pointer: str, name: str) -> dict:
+    """ Return value of hashtable variable in structure using hdata.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param name: variable name (must be type "hashtable")
+    :return hashtable value of variable
+
+    .. code-block:: python
+
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer = weechat.buffer_search_main()
+        hash = weechat.hdata_hashtable(hdata, buffer, "local_variables")
+        weechat.prnt("", "local variables in core buffer:")
+        for key in hash:
+            weechat.prnt("", "  %s == %s" % (key, hash[key]))
+
+
+    """
+    pass
+
+def hdata_compare(hdata: str, pointer1: str, pointer2: str, name: str,
+                  case_sensitive: int) -> int:
+    """ Compare a hdata variable of two objects.
+
+    :param hdata: hdata pointer
+    :param pointer1: pointer to first WeeChat/plugin object
+    :param pointer2: pointer to second WeeChat/plugin object
+    :param name: variable name
+    :param case_sensitive: 1 for case sensitive compare of strings, otherwise 0
+    :return: -1 if var1 < var2, 0 if var1 == var2, 1 if var1 > var2
+
+    .. code-block:: python
+        # example
+        hdata = weechat.hdata_get("buffer")
+        buffer1 = weechat.buffer_search("irc", "freenode.#weechat")
+        buffer2 = weechat.buffer_search("irc", "freenode.#weechat-fr")
+        weechat.prnt("", "number comparison = %d" %
+                     weechat.hdata_compare(hdata, buffer1, buffer2,
+                     "number", 0))
+
+    """
+    pass
+
+def hdata_update(hdata: str, pointer: str, hashtable: dict) -> int:
+    """ Update data in a hashtable.
+
+    :param hdata: hdata pointer
+    :param pointer: pointer to WeeChat/plugin object
+    :param hashtable: variables to update (see notes)
+    :return: number of variables updated
+
+    .. note::
+
+        keys are name of variables, values are new values for variables
+        (keys and values are string), some special keys are allowed:
+            key _create_allowed (with any value):
+                return 1 if create is allowed for structure, otherwise 0
+            key __delete_allowed (with any value):
+                return 1 if delete is allowed for structure, otherwise 0
+            key __update_allowed, value is name of a variable:
+                return 1 if update is allowed for this variable, otherwise 0
+            key __delete (with any value): delete structure (if allowed)
+
+
+    .. code-block:: python
+
+        # example: subtract one hour on last message displayed in current buffer
+        own_lines = weechat.hdata_pointer(weechat.hdata_get("buffer"),
+                                          weechat.current_buffer(), "own_lines")
+        if own_lines:
+            line = weechat.hdata_pointer(weechat.hdata_get("lines"),
+                                         own_lines, "last_line")
+            if line:
+                line_data = weechat.hdata_pointer(weechat.hdata_get("line"),
+                                                  line, "data")
+                hdata = weechat.hdata_get("line_data")
+                weechat.hdata_update(hdata, line_data,
+                                    {"date": str(weechat.hdata_time(hdata,
+                                     line_data, "date") - 3600)})
+
+
+
+    """
+    pass
+
+def hdata_get_string(hdata: str, property_value: str) -> str:
+    """ Return string value of a hdata property.
+
+    :param hdata: hdata pointer
+    :param property: property name (see notes)
+    :return: string value of property
+
+    .. note::
+
+        var_keys: string with list of keys for variables in hdata
+                  (format: "key1,key2,key3")
+        var_values: string with list of values for variables in hdata
+                    (format: "value1,value2,value3")
+        var_keys_values: string with list of keys and values for variables in
+                         hdata (format: "key1:value1,key2:value2,key3:value3")
+        var_prev: name of variable in structure which is a pointer to previous
+                  element in list
+        var_next: name of variable in structure which is a pointer to next
+                  element in list
+        list_keys: string with list of keys for lists in hdata
+                   (format: "key1,key2,key3")
+        list_values: string with list of values for lists in hdata
+                     (format: "value1,value2,value3")
+        list_keys_values: string with list of keys and values for lists in
+                          hdata (format: "key1:value1,key2:value2,key3:value3")
+
+
+    .. code-block:: python
+
+        weechat.prnt("", "variables in hdata: %s" %
+                     weechat.hdata_get_string(hdata, "var_keys"))
+        weechat.prnt("", "lists in hdata: %s" % weechat.hdata_get_string(hdata,
+                     "list_keys"))
+
+    """
+    pass
+
+def upgrade_new(filename: str, callback_read: str,
+                callback_read_data: str) -> str:
+    """ Create or read a file for upgrade.
+
+    :param filename: name of file (extension ".upgrade" is added by WeeChat)
+    :param callback_read: function called for each object read in upgrade file
+    :param callback_read_data: pointer given to callback
+    :return: pointer to upgrade file
+
+    .. code-block:: python
+
+        upgrade_file = weechat.upgrade_new("my_file", "", "")
+
+    """
+    pass
+
+def upgrade_write_object(upgrade_file: str, object_id: int,
+                         infolist: str) -> int
+    """ Write an object in upgrade file.
+
+    :param upgrade_file: upgrade file pointer
+    :param object_id: id for object
+    :param infolist: infolist to write in file
+    :return: 1 if OK, 0 if error
+
+    .. code-block:: python
+
+        weechat.upgrade_write_object(upgrade_file, 1, infolist)
+
+    """
+    pass
+
+def upgrade_read(upgrade_file: str) -> int:
+    """ Read an upgrade file.
+
+    :param upgrade_file: upgrade file pointer
+    :return: 1 if OK, 0 if error
+
+    .. code-block:: python
+
+        weechat.upgrade_read(upgrade_file)
+
+    """
+    pass
+
+def upgrade_close(upgrade_file: str) -> None:
+    """ Close an upgrade file.
+
+    :param upgrade_file: upgrade file pointer
+
+
+    .. code-block:: python
+
+        weechat.upgrade_close(upgrade_file)
+
+    """
+    pass
+
 
 
 
@@ -3789,3 +4698,12 @@ WEECHAT_HOOK_CONNECT_SOCKET_ERROR = 10
 WEECHAT_HOOK_SIGNAL_STRING = "string"
 WEECHAT_HOOK_SIGNAL_INT = "int"
 WEECHAT_HOOK_SIGNAL_POINTER = "pointer"
+# WEECHAT_HDATA_CHAR =
+# WEECHAT_HDATA_INTEGER =
+# WEECHAT_HDATA_LONG =
+# WEECHAT_HDATA_STRING =
+# WEECHAT_HDATA_SHARED_STRING =
+# WEECHAT_HDATA_POINTER =
+# WEECHAT_HDATA_TIME =
+# WEECHAT_HDATA_HASHTABLE =
+# WEECHAT_HDATA_OTHER =
