@@ -4611,7 +4611,7 @@ def upgrade_new(filename: str, callback_read: str,
     pass
 
 def upgrade_write_object(upgrade_file: str, object_id: int,
-                         infolist: str) -> int
+                         infolist: str) -> int:
     """ Write an object in upgrade file.
 
     :param upgrade_file: upgrade file pointer
